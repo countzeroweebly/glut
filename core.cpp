@@ -1,4 +1,10 @@
+#include <iostream>
 #include <string>
+#include <cstdlib>
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/freeglut.h>
 
 #include "io.h"
 #include "core.h"
@@ -93,7 +99,8 @@ void draw_string_bitmap(void *font, const char* string) {
 
 }
 
-void init() {
+void init(const char* rs_filename)
+{
         glClearColor(0.0, 0.0, 0.0, 1.0); // цвет очистки буферов - черный
         glEnable(GL_DEPTH_TEST); // включаем сортировку по глубине
         glShadeModel(GL_SMOOTH); // режим закрашивания: интерполируемые значения
@@ -113,10 +120,12 @@ void init() {
         int width, height; // ширина и высота текстуры
         bool hasAlpha;     // наличие альфа-канала
 
-        char filename[] = "cube_face.png"; // наша текстура
-        bool success = loadPngImage(filename, width, height, hasAlpha, &textureImage);
+        char filename[] = "texture.png"; // наша текстура
+        //char zipname[] = "rs.zip"; // наша текстура
+        //bool success = loadPngImage(filename, width, height, hasAlpha, &textureImage);
+        int success=loadPngImageFromZip(rs_filename, filename, width, height, hasAlpha, &textureImage);
 
-        if (!success) {
+        if (success != EXIT_SUCCESS) {
                 std::cerr << "Невозможно прочитать PNG файл" << std::endl;
                 return;
         }
