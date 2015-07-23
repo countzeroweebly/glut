@@ -9,6 +9,9 @@
 #include "io.h"
 #include "core.h"
 
+int xWidth;
+int xHeight;
+
 float cube[]={
         // Front face
         -1.0f, -1.0f,  1.0f,
@@ -215,13 +218,26 @@ void reshape(int w, int h)
         // установка вектора обзора
         // (0,0,3) камера; (0,0,0) центр сцены, верхом будет ось Y
         gluLookAt( 0, 0, 3, 0, 0, 0, 0, 1, 0 );
+
+        xWidth=w;
+        xHeight=h;
 }
 
-void key(unsigned char key, int  x, int y) {
-        // если была нажата клавиша ESC, Q, q, то завершаем программу
-        if ( key == 27 || key == 'q' || key == 'Q' ) {
+void key(unsigned char key, int  x, int y)
+{
+        if ( key == 27 || key == 'q' || key == 'Q' ) // ESC or Q(uit)
+        {
                 glutLeaveMainLoop();
-        }
+        };
+
+}
+
+void specialInput(int key, int x, int y)
+{
+    if (key == GLUT_KEY_F12)
+    {
+        makeScreenshot("screenshot.png", xWidth, xHeight);
+    }
 }
 
 void mytime(int value) {

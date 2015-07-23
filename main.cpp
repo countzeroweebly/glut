@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-        char* res_file="rs.zip";
+        const char* res_file="rs.zip";
 
         for(int i=1; i < argc; i++)
         {
@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
         glutDisplayFunc(display);
         glutReshapeFunc(reshape);
         glutKeyboardFunc(key);
+        glutSpecialFunc(specialInput);
         glutTimerFunc(1000, mytime, 0);
         glutIdleFunc(display);
         glutMainLoop();

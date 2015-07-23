@@ -24,7 +24,98 @@ bool fileExists(const char* filename)
     return (stat(filename, &buf) != -1) ? true : false;
 };
 
+int makeScreenshot(const char* filename, int width, int height)
+{
+    std::cerr << " try make screenshot... " << std::endl;
+    png_structp png_ptr;
+    png_infop info_ptr;
+    //png_colorp palette;
+    png_textp text;
+    png_bytep buf;
+    png_bytepp rowptrs;
+    FILE *fp;
 
+    //const char* filename="screnshot.png";
+    fp = fopen(filename, "wb");
+    if (fp == NULL)
+    {
+        return EXIT_FAILURE;
+    };
+
+    ///***//-> CREATE STRUCTURS <-//***/
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (png_ptr == NULL)
+    {
+        std::cerr << "ERROR: file: " << filename << " png_create_read_struct failed!" << std::endl;
+        fclose(fp);
+        return EXIT_FAILURE;
+    }
+
+    info_ptr = png_create_info_struct(png_ptr);
+    if (info_ptr == NULL)
+    {
+        std::cerr << "ERROR: file: " << filename << " png_create_info_struct failed!" << std::endl;
+        png_destroy_read_struct(&png_ptr, png_infopp_NULL, png_infopp_NULL);
+        fclose(fp);
+        return EXIT_FAILURE;
+    }
+
+    ///***/-> SET ERRORS HANDLED  <-///***/
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
+        std::cerr << "file: " << filename << " Error during init_io!" << std::endl;
+        //if (palette)
+        //    png_free(png_ptr, palette);
+        if (text)
+            png_free(png_ptr, text);
+        if (buf)
+            png_free(png_ptr, buf);
+        if (rowptrs)
+            png_free(png_ptr,rowptrs);
+
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        fclose(fp);
+        return EXIT_FAILURE;
+    }
+
+    png_init_io(png_ptr, fp);
+
+    png_set_IHDR(png_ptr, info_ptr, width, height, 8, PNG_COLOR_TYPE_RGB,
+            PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+    text = (png_textp)png_malloc(png_ptr, 2*sizeof(png_text));
+    text[0].compression=PNG_TEXT_COMPRESSION_NONE;
+    text[0].key=(png_charp)("Title");
+    text[0].text=(png_charp)("Screenshot");
+
+    text[1].compression=PNG_TEXT_COMPRESSION_NONE;
+    text[1].key=(png_charp)("Software");
+    text[1].text=(png_charp)("-Alpha");
+
+    png_set_text(png_ptr, info_ptr, text, 2);
+
+    buf=(png_bytep)png_malloc(png_ptr, width*height*3);
+    glReadPixels(0, 0, width ,height, GL_RGB, GL_UNSIGNED_BYTE, buf);
+
+    rowptrs=(png_bytepp)png_malloc(png_ptr, height*sizeof(png_bytep));
+
+    for(int i=0; i < height; i++)
+        rowptrs[i]=&buf[3*width*(height-i-1)];
+
+    png_set_rows(png_ptr, info_ptr, rowptrs);
+
+    //png_write_info(png_ptr,info_ptr);
+    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, png_infopp_NULL);
+    //png_write_end(png_ptr, info_ptr);
+
+    png_free(png_ptr, text);
+    png_free(png_ptr, buf);
+    png_free(png_ptr,rowptrs);
+
+    png_destroy_write_struct(&png_ptr, &info_ptr);
+    fclose(fp);
+    return EXIT_SUCCESS;
+}
 
 int loadPngImageFromZip(const char* name_zipped_file, const char *filename, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData)
 {
