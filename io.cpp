@@ -1,15 +1,10 @@
 #include <iostream>
 #include <sstream>
 
-#include <png.h>
-#include <zip.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/freeglut.h>
-
 #include <cstdlib>
 #include <sys/stat.h> // check that file exists
 #include "io.h"
+#include <core.h>
 
 // dropped from libpng 1.4
 #define png_infopp_NULL (png_infopp)NULL
@@ -24,7 +19,7 @@ bool fileExists(const char* filename)
     return (stat(filename, &buf) != -1) ? true : false;
 };
 
-int makeScreenshot(const char* filename, int width, int height)
+int ENGINE::makeScreenshot(const char* filename, int width, int height)
 {
     std::cerr << " try make screenshot... " << std::endl;
     png_structp png_ptr;
@@ -117,7 +112,7 @@ int makeScreenshot(const char* filename, int width, int height)
     return EXIT_SUCCESS;
 }
 
-int loadPngImageFromZip(const char* name_zipped_file, const char *filename, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData)
+int ENGINE::loadPngImageFromZip(const char* name_zipped_file, const char *filename, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData)
 {
     struct zip_file* zipped_file;
     struct zip* z;
@@ -265,7 +260,7 @@ void png_zip_read(png_structp png, png_bytep data, png_size_t size)
 }
 
 // загрузка png файла
-bool loadPngImage(char *name, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData) {
+bool ENGINE::loadPngImage(char *name, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData) {
     png_structp png_ptr;
     png_infop info_ptr;
     unsigned int sig_read = 0;
@@ -344,7 +339,7 @@ bool loadPngImage(char *name, int &outWidth, int &outHeight, bool &outHasAlpha, 
     return true;
 }
 
-int loadTextFromZip(const char* name_zipped_file, const char *filename, std::stringstream &ssBuf)
+int ENGINE::loadTextFromZip(const char* name_zipped_file, const char *filename, std::stringstream &ssBuf)
 {
     struct zip_file* zipped_file;
     struct zip* z;
