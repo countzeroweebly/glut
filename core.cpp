@@ -1,12 +1,13 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <thread>
+#include <future>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/freeglut.h>
 
-#include "io.h"
 #include "core.h"
 
 ENGINE core;
@@ -27,6 +28,7 @@ bool flag=false;
 
 GLuint textureId;
 GLubyte *textureImage;
+
 
 // вывод текста на холст OpenGL посредством GLUT
 void draw_string_bitmap(void *font, const char* string)
@@ -172,7 +174,8 @@ void ENGINE::specialInput(int key, int x, int y)
 {
     if (key == GLUT_KEY_F12)
     {
-        makeScreenshot("screenshot.png", xWidth, xHeight);
+        std::future<int> f1 = std::async(&ENGINE::makeScreenshot, this, "screenshot.png", xWidth, xHeight);
+        auto res1=f1.get();
     }
 }
 

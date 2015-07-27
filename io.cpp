@@ -3,7 +3,6 @@
 
 #include <cstdlib>
 #include <sys/stat.h> // check that file exists
-#include "io.h"
 #include <core.h>
 
 // dropped from libpng 1.4

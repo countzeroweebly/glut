@@ -1,10 +1,7 @@
 #include <GL/freeglut.h>
 #include <string>
 
-#include "io.h"
 #include "core.h"
-
-
 
 int main(int argc, char *argv[])
 {
@@ -21,7 +18,7 @@ int main(int argc, char *argv[])
     glutInit (&argc,argv);
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);
     glutInitWindowSize( 800,600);
-    int glWin=glutCreateWindow("demo 08: Object Model");
+    int glWin=glutCreateWindow("demo 09: Multithreading");
     init(res_file);
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);

@@ -4,6 +4,9 @@
 #include <GL/glu.h>
 #include <GL/freeglut.h>
 
+
+extern bool fileExists(const char* filename);
+
 class DATA {
 protected:
     float cube[72]={
@@ -101,4 +104,5 @@ void specialInput(int key, int x, int y);
 void reshape(int w, int h);
 void display();
 void init(const char* rs_filename);
+
 
